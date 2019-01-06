@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('register', 'API\UserController@register');
-Route::post('login', 'API\UserController@login');
+Route::post('login', 'API\UserController@login')->middleware('cors');
 Route::middleware('auth:api')->get('/user', function (Request $request) {
   return $request->user();
 });
