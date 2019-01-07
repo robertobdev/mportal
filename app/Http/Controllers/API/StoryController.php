@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
 use App\Story;
+use Illuminate\Support\Facades\Storage;
 class StoryController extends Controller {
 
   public function index() {
@@ -13,29 +14,28 @@ class StoryController extends Controller {
   }
 
   public function store(Request $request) {
-    $file = $request->file('file');
-    $ext = $file->extension();
-    $name = str_random(20).'.'.$ext ;
-    list($width, $height) = getimagesize($file);
-    $path = Storage::disk('public')->putFileAs(
-      'uploads', $file, $name
-    );
-
+    
     $validatedDate = $request->validate([
       'description' => 'required', 
       'title' => 'required', 
       'subtitle' => 'required',
-      'user_id' => 'required', 
-      'category_id' => 'required',
-      'image' => 'required'
+      'category_id' => 'required'
     ]);
+
+    $file = $request->file('image');
+    $ext = $file->extension();
+    $name = str_random(20).'.'.$ext ;
+    $path = Storage::disk('public')->putFileAs(
+      'uploads', $file, $name
+    );
 
     $store = Story::create([
       'description' => $validatedDate['description'],
       'title' => $validatedDate['title'],
       'subtitle' => $validatedDate['subtitle'],
-      'user_id' => $validatedDate['user_id'],
-      'category_id' => $validatedDate['category_id']
+      'user_id' => $request->user()->id,
+      'category_id' => $validatedDate['category_id'],
+      'image' => $path
     ]);
 
     return response()->json('Story created!');

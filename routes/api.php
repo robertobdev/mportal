@@ -15,5 +15,7 @@ use Illuminate\Http\Request;
 Route::post('register', 'API\UserController@register');
 Route::post('login', 'API\UserController@login')->middleware('cors');
 Route::group(['middleware' => ['cors', 'auth:api']], function(){
-  Route::resource('/stories', 'API\StoryController');
+  Route::resource('/story', 'API\StoryController');
+  Route::resource('/category', 'API\CategoryController');
+
 });
