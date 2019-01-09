@@ -23,6 +23,7 @@ class CreateStoriesTable extends Migration
             $table->unsignedInteger('category_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('categories');
+            $table->integer('count')->default(0);
             $table->timestamps();
         });
     }

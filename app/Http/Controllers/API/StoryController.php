@@ -56,7 +56,12 @@ class StoryController extends Controller {
   }
 
   public function show($id) {
-    $story = Story::with(['category'])->find($id);
+    $story = Story::with(['category', 'user:id,name'])->find($id);
+    return $story ? $story->toJson() : response()->json(['error' => 'Nenhuma história foi encontrada'], 404);
+  }
+  public function view($id) {
+    $story = Story::with(['category', 'user:id,name'])->find($id);
+    $story->update(['count' => ++$story->count]);
     return $story ? $story->toJson() : response()->json(['error' => 'Nenhuma história foi encontrada'], 404);
   }
   public function destroy($id) {
