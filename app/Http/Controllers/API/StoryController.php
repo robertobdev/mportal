@@ -40,9 +40,10 @@ class StoryController extends Controller {
       $this->storageImage($request->image, str_replace('/uploads', '', $request->imagePath));
     }
 
-    return $request->all();
+    $store = Story::find($id);
+    $store->update($request->all());
 
-    Story::update($request->all()):
+    // Story::update($request->all()):
     // if ($request->user()->id !== $store->user_id) {
     //   return response()->json(['error' => 'You can only edit your own books.'], 403);
     // }
