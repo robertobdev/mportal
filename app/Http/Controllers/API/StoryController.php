@@ -14,7 +14,6 @@ class StoryController extends Controller {
   }
 
   public function store(Request $request) {
-    return $request;
     $validatedDate = $request->validate([
       'description' => 'required', 
       'title' => 'required', 
@@ -40,17 +39,12 @@ class StoryController extends Controller {
       $this->storageImage($request->image, str_replace('uploads/', '', $request->imagePath));
     }
     $request->merge(['image' => $request->imagePath]);
-    $store = Story::find($id);
-    $store->update($request->all());
-
-    // Story::update($request->all()):
-    // if ($request->user()->id !== $store->user_id) {
-    //   return response()->json(['error' => 'You can only edit your own books.'], 403);
-    // }
-
-    // $store->update($request->only(['title', 'description']));
+    $story = Story::find($id);
+    if ($request->user()->id !== $story->user_id) {
+      return response()->json(['error' => 'Você só pode editar suas proprias historias.'], 403);
+    }
+    $story->update($request->all());
     return response()->json('Story updated!');
-    // return new BookResource($store);
   }
 
   private function storageImage($base64, $name = null) {
@@ -63,6 +57,11 @@ class StoryController extends Controller {
 
   public function show($id) {
     $story = Story::with(['category'])->find($id);
-    return $story->toJson();
+    return $story ? $story->toJson() : response()->json(['error' => 'Nenhuma história foi encontrada'], 404);
+  }
+  public function destroy($id) {
+    $story = Story::find($id);
+    $story->delete();
+    return 'Story deleted';
   }
 }
