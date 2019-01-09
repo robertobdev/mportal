@@ -37,9 +37,9 @@ class StoryController extends Controller {
   }
   public function update(Request $request, $id) {
     if (strpos($request->image, 'data:image') !== false) {
-      $this->storageImage($request->image, str_replace('/uploads', '', $request->imagePath));
+      $this->storageImage($request->image, str_replace('uploads/', '', $request->imagePath));
     }
-
+    $request->merge(['image' => $request->imagePath]);
     $store = Story::find($id);
     $store->update($request->all());
 
@@ -56,7 +56,6 @@ class StoryController extends Controller {
   private function storageImage($base64, $name = null) {
     $image = str_replace('data:image/png;base64,', '', $base64);
     $image = str_replace(' ', '+', $image);
-
     $imageName = $name ? $name : str_random(20).'.png';
     \File::put(storage_path(). '/app/public/uploads/' . $imageName, base64_decode($image));
     return $imageName;
