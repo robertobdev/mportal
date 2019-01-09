@@ -17,5 +17,4 @@ Route::post('login', 'API\UserController@login')->middleware('cors');
 Route::group(['middleware' => ['cors', 'auth:api']], function(){
   Route::resource('/story', 'API\StoryController');
   Route::resource('/category', 'API\CategoryController');
-
 });

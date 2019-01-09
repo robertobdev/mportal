@@ -14,7 +14,7 @@ class StoryController extends Controller {
   }
 
   public function store(Request $request) {
-    
+    return $request;
     $validatedDate = $request->validate([
       'description' => 'required', 
       'title' => 'required', 
@@ -22,12 +22,7 @@ class StoryController extends Controller {
       'category_id' => 'required'
     ]);
 
-    $file = $request->file('image');
-    $ext = $file->extension();
-    $name = str_random(20).'.'.$ext ;
-    $path = Storage::disk('public')->putFileAs(
-      'uploads', $file, $name
-    );
+    $path = "uploads/" . $this->storageImage($request->image);
 
     $store = Story::create([
       'description' => $validatedDate['description'],
@@ -40,8 +35,34 @@ class StoryController extends Controller {
 
     return response()->json('Story created!');
   }
+  public function update(Request $request, $id) {
+    if (strpos($request->image, 'data:image') !== false) {
+      $this->storageImage($request->image, str_replace('/uploads', '', $request->imagePath));
+    }
+
+    return $request->all();
+
+    Story::update($request->all()):
+    // if ($request->user()->id !== $store->user_id) {
+    //   return response()->json(['error' => 'You can only edit your own books.'], 403);
+    // }
+
+    // $store->update($request->only(['title', 'description']));
+    return response()->json('Story updated!');
+    // return new BookResource($store);
+  }
+
+  private function storageImage($base64, $name = null) {
+    $image = str_replace('data:image/png;base64,', '', $base64);
+    $image = str_replace(' ', '+', $image);
+
+    $imageName = $name ? $name : str_random(20).'.png';
+    \File::put(storage_path(). '/app/public/uploads/' . $imageName, base64_decode($image));
+    return $imageName;
+  }
+
   public function show($id) {
-    $story = Story::with(['categories'])->find($id);
+    $story = Story::with(['category'])->find($id);
     return $story->toJson();
   }
 }
