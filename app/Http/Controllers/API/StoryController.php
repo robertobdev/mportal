@@ -17,9 +17,9 @@ class StoryController extends Controller {
   public function getAll() {
     $mainStory = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')->first();
     $highlights = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
-    ->limit(3)->offset(1)->get();
+    ->limit(2)->offset(1)->get();
     $list = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
-    ->limit(6)->offset(4)->get();
+    ->limit(6)->offset(3)->get();
 
     $sideStories = array('list' => $list, 'highlights' => $highlights);
     $stories = array('mainStory' => $mainStory, 'sideStories' => $sideStories);
