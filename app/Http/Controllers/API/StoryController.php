@@ -8,9 +8,23 @@ use Illuminate\Support\Facades\Storage;
 class StoryController extends Controller {
 
   public function index() {
+    /* TODO: only get stories by user id
+    */
     $stories = Story::with(['category', 'user'])->get();
 
     return $stories->toJson();
+  }
+  public function getAll() {
+    $mainStory = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')->first();
+    $highlights = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
+    ->limit(3)->offset(1)->get();
+    $list = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
+    ->limit(6)->offset(4)->get();
+
+    $sideStories = array('list' => $list, 'highlights' => $highlights);
+    $stories = array('mainStory' => $mainStory, 'sideStories' => $sideStories);
+   
+    return response()->json($stories);
   }
 
   public function store(Request $request) {
