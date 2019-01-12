@@ -7,11 +7,8 @@ use App\Story;
 use Illuminate\Support\Facades\Storage;
 class StoryController extends Controller {
 
-  public function index() {
-    /* TODO: only get stories by user id
-    */
-    $stories = Story::with(['category', 'user'])->get();
-
+  public function index(Request $request) {
+    $stories = Story::with(['category', 'user'])->where(['user_id' => $request->user()->id])->get();
     return $stories->toJson();
   }
   public function getAll() {
@@ -69,8 +66,8 @@ class StoryController extends Controller {
     return $imageName;
   }
 
-  public function show($id) {
-    $story = Story::with(['category', 'user:id,name'])->find($id);
+  public function show(Request $request, $id) {
+    $story = Story::with(['category', 'user:id,name'])->where(['user_id' => $request->user()->id])->find($id);
     return $story ? $story->toJson() : response()->json(['error' => 'Nenhuma história foi encontrada'], 404);
   }
   public function view($id) {
