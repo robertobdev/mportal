@@ -15,7 +15,7 @@ class StoryController extends Controller {
     $mainStory = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')->first();
     $highlights = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
     ->limit(2)->offset(1)->get();
-    $list = Story::with(['category', 'user:id,name'])->orderBy('count', 'desc')
+    $list = Story::with(['category', 'user:id,name'])->inRandomOrder()
     ->limit(6)->offset(3)->get();
 
     $sideStories = array('list' => $list, 'highlights' => $highlights);
