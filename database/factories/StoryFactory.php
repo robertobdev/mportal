@@ -7,7 +7,7 @@ $factory->define(App\Story::class, function (Faker $faker) {
     'title' => $faker->title,
     'subtitle' => $faker->sentence,
     'description' => $faker->paragraph,
-    'image' => '',
+    'image' => 'uploads/placehold.png',
     'user_id' => 1,
     'category_id' => 1
   ];
